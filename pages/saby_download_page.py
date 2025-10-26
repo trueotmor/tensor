@@ -46,15 +46,8 @@ class SabyDownloadPage(BasePage):
             self.wait_for_page_loaded()
 
     def _click_download_link(self):
-        download_link = self.wait_clickable(self.DOWNLOAD_LINK, timeout=10)
-        
-        # Проверяем текст ссылки для подтверждения
-        link_text = download_link.text
-        if "Скачать локальные версии" not in link_text:
-            self.logger.warning(f"Текст ссылки не соответствует ожидаемому: '{link_text}'")
-        
-        # Кликаем по ссылке
-        download_link.click()
+        # Используем метод click_element для обработки StaleElementReferenceException
+        self.click_element(self.DOWNLOAD_LINK, timeout=10)
         self.logger.info("✅ Успешно кликнули по ссылке 'Скачать локальные версии'")
 
     def ensure_saby_desktop_selected(self):

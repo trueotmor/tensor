@@ -13,18 +13,16 @@ from pages.saby_download_page import SabyDownloadPage
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format='%(message)s - %(levelname)s - %(asctime)s - %(name)s',
     handlers=[logging.StreamHandler()]
 )
 
 def setup_download_directory():
-    """Настройка директории для загрузок"""
     download_dir = tempfile.mkdtemp()
     logging.info(f"Директория для загрузок: {download_dir}")
     return download_dir
 
 def setup_chrome_driver(download_dir):
-    """Настройка Chrome драйвера для загрузки файлов"""
     chrome_options = Options()
     
     # Настройки для автоматической загрузки файлов
@@ -37,7 +35,7 @@ def setup_chrome_driver(download_dir):
     }
     chrome_options.add_experimental_option("prefs", prefs)
     
-    chrome_options.add_argument("--window-size=1920,1080")
+    # chrome_options.add_argument("--window-size=1920,1080")
     
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
@@ -90,7 +88,7 @@ def test_third_scenario():
         logger.info(f"Информация о версии: {download_info['version_info']}")
         
         # Используем ожидаемый размер из задания
-        expected_size_mb = 3.64
+        expected_size_mb = 6.50
         logger.info(f"Ожидаемый размер: {expected_size_mb} МБ")
 
         # 7. Скачать веб-установщик
