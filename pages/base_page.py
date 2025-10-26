@@ -1,15 +1,12 @@
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 import logging
 
 class BasePage:
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
 
     def find_element(self, locator, timeout=10):
         return WebDriverWait(self.driver, timeout).until(
@@ -17,14 +14,36 @@ class BasePage:
         )   
 
     def click_element(self, locator, timeout=10):
-        element = WebDriverWait(self.driver, timeout).until(
-            EC.element_to_be_clickable(locator)
-        )
-        element.click()
 
+        for attempt in range(3):
+            try:
+                element = WebDriverWait(self.driver, timeout).until(
+                    EC.element_to_be_clickable(locator)
+                )
+                element.click()
+                break
+            except StaleElementReferenceException:
+                if attempt == 2:  # Последняя попытка
+                    raise
+                self.logger.warning(f"StaleElementReferenceException, попытка {attempt + 1}")
+                # Ждем обновления DOM
+                WebDriverWait(self.driver, 2).until(
+                    lambda driver: False  # Просто ждем
+                )
+    
     def get_element_size(self, locator):
         element = self.find_element(locator)
         return element.size
 
     def get_current_url(self):
         return self.driver.current_url
+
+    def wait_for_url_contains(self, text, timeout=10):
+        WebDriverWait(self.driver, timeout).until(
+            EC.url_contains(text)
+        )
+
+    def wait_for_page_loaded(self, timeout=15):
+        WebDriverWait(self.driver, timeout).until(
+            lambda driver: driver.execute_script("return document.readyState") == "complete"
+        )
