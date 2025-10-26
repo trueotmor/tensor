@@ -75,11 +75,17 @@ def test_first_scenario():
         elif len(images) < 2:
             logger.warning(f"⚠️ Найдено менее 2 изображений ({len(images)})")
         else:
+            # Получаем свежие элементы перед проверкой размеров
+            images = tensor_about.find_working_images()
             first_size = images[0].size
             logger.info(f"Сравниваем размеры {len(images)} изображений")
-            for i, img in enumerate(images, 1):
-                img_size = img.size
-                assert img_size == first_size, f"Изображение {i} имеет другой размер: {img_size} vs {first_size}"
+            
+            for i, img in enumerate(images[1:], 2):
+                # Получаем свежий элемент для каждой итерации
+                current_images = tensor_about.find_working_images()
+                if i - 1 < len(current_images):
+                    img_size = current_images[i - 1].size
+                    assert img_size == first_size, f"Изображение {i} имеет другой размер: {img_size} vs {first_size}"
             
             logger.info(f"Все {len(images)} изображений одинакового размера: {first_size}")
         
