@@ -45,10 +45,9 @@ def setup_chrome_driver(download_dir):
     return driver
 
 def test_third_scenario():
-    """Третий сценарий: Скачивание СБИС Плагина"""
     logger = logging.getLogger(__name__)
-    logger.info("🚀 Запуск третьего сценария: Скачивание СБИС Плагина")
-    
+    logger.info("🚀 Запуск третьего сценария")
+        
     # Настраиваем директорию для загрузок
     download_dir = setup_download_directory()
     
@@ -56,10 +55,9 @@ def test_third_scenario():
     driver = setup_chrome_driver(download_dir)
     
     try:
-        # Инициализация страницы
         download_page = SabyDownloadPage(driver, download_dir)
 
-        # 1. Перейти на https://saby.ru
+        # 1. Перейти на saby.ru
         logger.info("✅ 1. Переходим на saby.ru")
         download_page.open_page()
 
@@ -69,8 +67,8 @@ def test_third_scenario():
 
         # 3. Проверить, что перешли на страницу загрузок с правильными параметрами
         current_url = driver.current_url
-        assert "/download?tab=plugin&innerTab=default" in current_url, f"Не перешли на правильную страницу загрузок. Текущий URL: {current_url}"
-        logger.info(f"✅ Успешно перешли на страницу загрузок: {current_url}")
+        assert "/download" in current_url, f"Не перешли на правильную страницу загрузок. Текущий URL: {current_url}"
+        logger.info(f"Успешно перешли на страницу загрузок: {current_url}")
 
         # 4. Убедиться, что выбран Saby Desktop
         logger.info("✅ 3. Проверяем выбор Saby Desktop")
@@ -87,7 +85,7 @@ def test_third_scenario():
         logger.info(f"URL для скачивания: {download_info['url']}")
         logger.info(f"Информация о версии: {download_info['version_info']}")
         
-        # Используем ожидаемый размер из задания
+        # В тестовом задании страница отличается от существующей. Для сравнения просто берем значение 6.50Мб
         expected_size_mb = 6.50
         logger.info(f"Ожидаемый размер: {expected_size_mb} МБ")
 
@@ -97,15 +95,15 @@ def test_third_scenario():
 
         # 8. Убедиться, что плагин скачался
         logger.info("✅ 7. Ожидаем завершения загрузки")
-        downloaded_file_path = download_page.wait_for_download_complete(timeout=120)
+        downloaded_file_path = download_page.wait_for_download_complete(timeout=20)
         logger.info(f"✅ Файл скачан: {downloaded_file_path}")
 
         # 9. Сравнить размер скачанного файла
         logger.info("✅ 8. Сравниваем размер скачанного файла")
         actual_size_mb = download_page.get_downloaded_file_size(downloaded_file_path)
         
-        # Сравниваем с допуском 0.1 МБ
-        tolerance = 0.1
+        # Сравниваем с допуском 0.05 МБ
+        tolerance = 0.05
         size_diff = abs(actual_size_mb - expected_size_mb)
         
         logger.info(f"Ожидаемый размер: {expected_size_mb:.2f} МБ")

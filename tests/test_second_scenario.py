@@ -110,14 +110,12 @@ def test_second_scenario():
         logger.info("✅ 11. Проверяем URL")
         new_url = saby_page.get_current_url()
         assert new_url != original_url, "URL не изменился после смены региона"
-        #TODO: убрать хардкод
         assert "41-kamchatskij-kraj" in new_url.lower(), f"URL не содержит информацию о выбранном регионе"
         logger.info(f"URL изменился и содержит регион: {new_url}")
         
         logger.info("✅ 12. Проверяем title")
         new_title = saby_page.get_page_title()
         assert new_title != original_title, "Title не изменился после смены региона"
-        #TODO: убрать хардкод
         assert "Камчатский" in new_title, f"Title не содержит информацию о выбранном регионе. Текущий title: {new_title}"
         logger.info(f"Title изменился и содержит регион: {new_title}")
         
