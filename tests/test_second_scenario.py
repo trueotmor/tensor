@@ -1,7 +1,6 @@
 import logging
 import sys
 import os
-import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -75,7 +74,6 @@ def test_second_scenario():
         # Ждем обновления данных после смены региона
         logger.info("Ждем обновления данных после смены региона")
         saby_page.wait_for_partners_updated()
-        time.sleep(5)
         
         # 4. Проверить изменения
         logger.info("✅ 9. Проверяем смену региона")

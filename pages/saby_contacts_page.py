@@ -48,6 +48,9 @@ class SabyContactsPage(BasePage):
         self.wait_for_page_loaded()
 
     def get_current_region(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(self.CURRENT_REGION)
+        )
         region_element = self.find_element(self.CURRENT_REGION, timeout=10)
         return region_element.text.strip()
 
