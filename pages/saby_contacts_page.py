@@ -50,27 +50,18 @@ class SabyContactsPage(BasePage):
         region_element = self.find_element(self.CURRENT_REGION, timeout=10)
         return region_element.text.strip()
 
-    def get_partners_count(self):
+    def get_partners(self):
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(self.PARTNERS_CONTAINER)
             )
             partner_elements = self.driver.find_elements(*self.PARTNER_ITEMS)
             partners = [partner for partner in partner_elements if partner.is_displayed()]
-            return len(partners)
+            return partners
             
         except Exception as e:
             self.logger.warning(f"Не удалось найти сертифицированных партнеров: {e}")
-            return 0
-
-    def get_cities_count(self):
-        try:
-            city_elements = self.driver.find_elements(*self.PARTNER_CITIES)
-            visible_cities = [city for city in city_elements if city.is_displayed()]
-            return len(visible_cities)
-        except Exception as e:
-            self.logger.warning(f"Не удалось найти города: {e}")
-            return 0
+            return []
 
     def get_partners_info(self):
         partners_info = []
