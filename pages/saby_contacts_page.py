@@ -4,9 +4,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 
 class SabyContactsPage(BasePage):
-    # Простые селекторы
-    CONTACTS_BUTTON = (By.XPATH, "//*[contains(text(), 'Контакты')]")
-    CONTACTS_LINK = (By.XPATH, "//a[contains(@href, '/contacts') and contains(., 'офиса в регионе')]")
+    # CONTACTS_BUTTON = (By.XPATH, "//*[contains(text(), 'Контакты')]")
+    CONTACTS_BUTTON = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__title span")
+    # CONTACTS_LINK = (By.XPATH, "//a[contains(@href, '/contacts') and contains(., 'офиса в регионе')]")
+    CONTACTS_LINK = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__items-visible a[href='/contacts']")
     TENSOR_BANNER = (By.CSS_SELECTOR, "a.sbisru-Contacts__logo-tensor")
     
     CURRENT_REGION = (By.CSS_SELECTOR, ".sbis_ru-Region-Chooser__text")
@@ -104,9 +105,9 @@ class SabyContactsPage(BasePage):
         target_region = None
         for region in region_elements:
             try:
-                # Получаем текст региона (содержит код и название)
+                # Получаем текст региона
                 region_text = region.text.strip()
-                # Получаем title региона (чистое название)
+                # Получаем title региона
                 region_title = region.find_element(By.CSS_SELECTOR, "span[title]").get_attribute("title")
                 
                 self.logger.debug(f"Проверяем регион: text='{region_text}', title='{region_title}'")
