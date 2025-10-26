@@ -1,12 +1,11 @@
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 
 class SabyContactsPage(BasePage):
-    # CONTACTS_BUTTON = (By.XPATH, "//*[contains(text(), 'Контакты')]")
     CONTACTS_BUTTON = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__title span")
-    # CONTACTS_LINK = (By.XPATH, "//a[contains(@href, '/contacts') and contains(., 'офиса в регионе')]")
     CONTACTS_LINK = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__items-visible a[href='/contacts']")
     TENSOR_BANNER = (By.CSS_SELECTOR, "a.sbisru-Contacts__logo-tensor")
     
@@ -28,8 +27,12 @@ class SabyContactsPage(BasePage):
     def open_page(self):
         self.driver.get(self.url)
         self.wait_for_page_loaded()
+        
 
     def click_contacts_button(self):
+        WebDriverWait(self.driver, timeout=10).until(
+            EC.presence_of_element_located(self.CONTACTS_BUTTON)
+        )
         self.click_element(self.CONTACTS_BUTTON)
         WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(self.CONTACTS_LINK)
@@ -127,18 +130,11 @@ class SabyContactsPage(BasePage):
             target_region.click()
             self.logger.info(f"Выбран регион: {region_name}")
             
-            # Ждем закрытия диалога
+            # Ждем закрытия диалога и обновления страницы
             WebDriverWait(self.driver, 10).until(
                 EC.invisibility_of_element_located(self.REGION_DIALOG)
             )
             self.wait_for_page_loaded()
-            WebDriverWait(self.driver, 10).until(
-                lambda driver: region_name in self.get_current_region()
-            )
-            
-            # Проверяем что регион действительно сменился
-            current_region = self.get_current_region()
-            self.logger.info(f"Регион успешно сменился на: {current_region}")
         else:
             raise Exception(f"Регион '{region_name}' не найден в списке")
 
@@ -153,7 +149,7 @@ class SabyContactsPage(BasePage):
             lambda driver: expected_region.lower() in self.get_current_region().lower()
         )
 
-    def wait_for_partners_updated(self, timeout=15):
+    def wait_for_partners_updated(self, timeout=10):
         WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located(self.PARTNERS_CONTAINER)
         )

@@ -25,9 +25,7 @@ class BasePage:
                 if attempt == 2:
                     raise
                 self.logger.warning(f"StaleElementReferenceException, попытка {attempt + 1}")
-                WebDriverWait(self.driver, 2).until(
-                    lambda driver: False
-                )
+                continue
     
     def get_element_size(self, locator):
         element = self.find_element(locator)
