@@ -10,18 +10,16 @@ class BasePage:
         self.wait = WebDriverWait(driver, 10)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
-        self.logger.addHandler(logging.StreamHandler())
-        self.logger.info("BasePage initialized")
 
-    def find_element(self, locator):
-        try:
-            return self.wait.until(EC.presence_of_element_located(locator))
-        except TimeoutException:    
-            self.logger.error(f"Element not found: {locator}")
-            raise
+    def find_element(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located(locator)
+        )   
 
-    def click_element(self, locator):   
-        element = self.find_element(locator)
+    def click_element(self, locator, timeout=10):
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable(locator)
+        )
         element.click()
 
     def get_element_size(self, locator):
