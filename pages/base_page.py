@@ -41,7 +41,19 @@ class BasePage:
             EC.url_contains(text)
         )
 
-    def wait_for_page_loaded(self, timeout=15):
+    def wait_visible(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(locator),
+        )
+
+    def wait_clickable(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable(locator),
+        )
+
+    def wait_for_page_loaded(self, timeout=10):
         WebDriverWait(self.driver, timeout).until(
             lambda driver: driver.execute_script("return document.readyState") == "complete"
         )
+
+    

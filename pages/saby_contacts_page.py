@@ -127,11 +127,18 @@ class SabyContactsPage(BasePage):
             target_region.click()
             self.logger.info(f"Выбран регион: {region_name}")
             
-            # Ждем закрытия диалога и обновления страницы
+            # Ждем закрытия диалога
             WebDriverWait(self.driver, 10).until(
                 EC.invisibility_of_element_located(self.REGION_DIALOG)
             )
             self.wait_for_page_loaded()
+            WebDriverWait(self.driver, 10).until(
+                lambda driver: region_name in self.get_current_region()
+            )
+            
+            # Проверяем что регион действительно сменился
+            current_region = self.get_current_region()
+            self.logger.info(f"Регион успешно сменился на: {current_region}")
         else:
             raise Exception(f"Регион '{region_name}' не найден в списке")
 

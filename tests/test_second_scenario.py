@@ -77,6 +77,10 @@ def test_second_scenario():
         
         # 4. Проверить изменения
         logger.info("✅ 9. Проверяем смену региона")
+        
+        # Ждем смены региона используя wait_for_region_changed
+        saby_page.wait_for_region_changed("Камчатский", timeout=10)
+        
         new_region = saby_page.get_current_region()
         assert "Камчатский" in new_region, f"Регион не сменился на Камчатский край. Текущий регион: {new_region}"
         logger.info(f"Регион изменился на: {new_region}")
