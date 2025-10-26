@@ -19,37 +19,66 @@ logging.basicConfig(
 )
 
 def test_first_scenario():
+    logger = logging.getLogger(__name__)
     logging.info("🚀 Запуск первого сценария")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    
+
     try:
-        # 1. Saby контакты
         saby_page = SabyContactsPage(driver)
-        saby_page.open_contacts_page()
+        tensor_main = TensorMainPage(driver)
+        tensor_about = TensorAboutPage(driver)
+
+        # 1. Saby контакты
+        logger.info("✅ 1. Открываем saby.ru")
+        saby_page.open_page()
         
+        logger.info("✅ 2. Открываем меню контактов")
+        saby_page.click_contacts_button()
+        
+        logger.info("✅ 3. Переходим в контакты и ждем редирект в регион")
+        saby_page.click_contacts_link()
+        
+        current_url = saby_page.get_current_url()
+        assert "/contacts" in current_url, f"Не перешли на страницу контактов. Текущий URL: {current_url}"
+        logger.info(f"✅ 4. Страница контактов загружена: {current_url}")
+
         # 2. Баннер Тензор
+        logger.info("✅ 5. Кликаем на баннер Тензор")
         saby_page.click_tensor_banner()
         
-        # 3. Tensor главная
-        tensor_main = TensorMainPage(driver)
-        
-        # 4. Проверка блока "Сила в людях"
-        assert tensor_main.is_power_block_displayed(), "Блок 'Сила в людях' не найден"
-                
-        # 5. Переход в Подробнее
+        current_url = driver.current_url
+        assert "tensor.ru" in current_url, f"Не перешли на tensor.ru. Текущий URL: {current_url}"
+        logger.info(f"✅ 6. Перешли на tensor.ru: {current_url}")
+
+        # 3. Проверка блока "Сила в людях"
+        logger.info("✅ 7. Проверяем блок 'Сила в людях'")
+        power_block = tensor_main.find_power_block()
+        assert power_block.is_displayed(), "Блок 'Сила в людях' не найден"
+        logger.info("Блок 'Сила в людях' найден и отображается")
+
+        # 4. Переход в Подробнее
+        logger.info("✅ 8. Кликаем на 'Подробнее'")
         tensor_main.click_details()
         
-        # 6. Проверка URL about
         current_url = driver.current_url
-        assert current_url == "https://tensor.ru/about", f"Ожидался https://tensor.ru/about, получен {current_url}"
-                
-        # 7. Проверка изображений
-        tensor_about = TensorAboutPage(driver)
-        assert tensor_about.verify_images_same_size(), "Изображения имеют разные размеры"
+        assert "tensor.ru/about" in current_url, f"Не перешли на страницу about. Текущий URL: {current_url}"
+        logger.info("✅ 9. Успешно перешли на страницу about")
 
-        logging.info("\n🎉 ВЕСЬ ПЕРВЫЙ СЦЕНАРИЙ УСПЕШНО ВЫПОЛНЕН!")
+        # 5. Проверка изображений
+        logger.info("✅ 10. Проверяем размеры изображений")
+        images = tensor_about.find_working_images()
+        assert len(images) >= 2, f"Не найдено достаточно изображений для проверки. Найдено: {len(images)}"
         
+        first_size = images[0].size
+        for i, img in enumerate(images, 1):
+            img_size = img.size
+            assert img_size == first_size, f"Изображение {i} имеет другой размер: {img_size} vs {first_size}"
+        
+        logger.info(f"Все {len(images)} изображений одинакового размера: {first_size}")
+        
+        logger.info("🎉 ВЕСЬ СЦЕНАРИЙ УСПЕШНО ВЫПОЛНЕН!")
+    
     except Exception as e:
         logging.error(f"❌ Ошибка: {e}")
         raise

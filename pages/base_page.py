@@ -14,7 +14,6 @@ class BasePage:
         )   
 
     def click_element(self, locator, timeout=10):
-
         for attempt in range(3):
             try:
                 element = WebDriverWait(self.driver, timeout).until(
@@ -23,12 +22,11 @@ class BasePage:
                 element.click()
                 break
             except StaleElementReferenceException:
-                if attempt == 2:  # Последняя попытка
+                if attempt == 2:
                     raise
                 self.logger.warning(f"StaleElementReferenceException, попытка {attempt + 1}")
-                # Ждем обновления DOM
                 WebDriverWait(self.driver, 2).until(
-                    lambda driver: False  # Просто ждем
+                    lambda driver: False
                 )
     
     def get_element_size(self, locator):
