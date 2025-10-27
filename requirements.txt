@@ -1,0 +1,8 @@
+# Selenium WebDriver для автоматизации браузера
+selenium==4.27.0
+
+# WebDriver Manager для автоматического управления драйверами
+webdriver-manager==4.0.2
+
+# Pytest для тестирования
+pytest==8.4.2
