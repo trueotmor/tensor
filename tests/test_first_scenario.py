@@ -71,4 +71,4 @@ def test_first_scenario(driver):
         
         logger.info(f"Все {len(images)} изображений одинакового размера: {first_size}")
     
-    logger.info("ВЕСЬ ПЕРВЫЙ СЦЕНАРИЙ УСПЕШНО ВЫПОЛНЕН!")
+    logger.info("ПЕРВЫЙ СЦЕНАРИЙ УСПЕШНО ВЫПОЛНЕН!")

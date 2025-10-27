@@ -3,9 +3,9 @@ from .base_page import BasePage
 
 class TensorMainPage(BasePage):
     """Page Object для главной страницы Tensor"""
-    
-    POWER_BLOCK = (By.XPATH, "//p[@class='tensor_ru-Index__card-title tensor_ru-pb-16' and contains(text(), 'Сила в людях')]")
-    DETAILS_LINK = (By.XPATH, "//a[@href='/about' and contains(text(), 'Подробнее')]")
+
+    POWER_BLOCK = (By.CSS_SELECTOR, ".tensor_ru-Index__card-title")  # Блок "Сила в людях"
+    DETAILS_LINK = (By.CSS_SELECTOR, "a.tensor_ru-link[href='/about']")  # Ссылка "Подробнее"
 
     def __init__(self, driver):
         super().__init__(driver)
