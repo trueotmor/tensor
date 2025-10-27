@@ -45,8 +45,6 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <repository-url>
-cd TENZOR
 ```
 
 ### 2. Создание виртуального окружения
@@ -125,6 +123,7 @@ TENZOR/
 │   └── test_third_scenario.py # Тест третьего сценария
 ├── conftest.py                # Конфигурация pytest
 ├── .gitignore                 # Игнорируемые файлы
+├── requirements.txt           # Зависимости проекта
 └── README.md                  # Документация
 
 ```
