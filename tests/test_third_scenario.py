@@ -1,22 +1,19 @@
 import logging
-import tempfile
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from pages.saby_download_page import SabyDownloadPage
 
-def setup_download_directory():
-    download_dir = tempfile.mkdtemp()
-    logging.info(f"Директория для загрузок: {download_dir}")
-    return download_dir
+def test_third_scenario(temp_download_dir):
+    """Тест третьего сценария: скачивание плагина СБИС"""
+    logger = logging.getLogger(__name__)
+    logger.info("Запуск третьего сценария")
 
-def setup_chrome_driver(download_dir):
+    # Setup: Настраиваем драйвер для автоматической загрузки файлов
     chrome_options = Options()
-    
-    # Настройки для автоматической загрузки файлов
     prefs = {
-        "download.default_directory": download_dir,
+        "download.default_directory": temp_download_dir,
         "download.prompt_for_download": False,
         "download.directory_upgrade": True,
         "safebrowsing.enabled": True,
@@ -24,27 +21,13 @@ def setup_chrome_driver(download_dir):
     }
     chrome_options.add_experimental_option("prefs", prefs)
     
-    # chrome_options.add_argument("--window-size=1920,1080")
-    
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
         options=chrome_options
     )
     
-    return driver
-
-def test_third_scenario():
-    logger = logging.getLogger(__name__)
-    logger.info("Запуск третьего сценария")
-        
-    # Настраиваем директорию для загрузок
-    download_dir = setup_download_directory()
-    
-    # Настраиваем драйвер
-    driver = setup_chrome_driver(download_dir)
-    
     try:
-        download_page = SabyDownloadPage(driver, download_dir)
+        download_page = SabyDownloadPage(driver, temp_download_dir)
 
         # 1. Перейти на saby.ru
         logger.info("1. Переходим на saby.ru")
@@ -54,7 +37,7 @@ def test_third_scenario():
         logger.info("2. Переходим в раздел загрузок")
         download_page.navigate_to_downloads()
 
-        # 3. Проверить, что перешли на страницу загрузок с правильными параметрами
+        # 3. Проверить, что перешли на страницу загрузок
         current_url = driver.current_url
         assert "/download" in current_url, f"Не перешли на правильную страницу загрузок. Текущий URL: {current_url}"
         logger.info(f"Успешно перешли на страницу загрузок: {current_url}")
@@ -74,7 +57,6 @@ def test_third_scenario():
         logger.info(f"URL для скачивания: {download_info['url']}")
         logger.info(f"Информация о версии: {download_info['version_info']}")
         
-        # В тестовом задании страница отличается от существующей. Для сравнения просто берем значение 6.50Мб
         expected_size_mb = 6.50
         logger.info(f"Ожидаемый размер: {expected_size_mb} МБ")
 
@@ -91,7 +73,6 @@ def test_third_scenario():
         logger.info("8. Сравниваем размер скачанного файла")
         actual_size_mb = download_page.get_downloaded_file_size(downloaded_file_path)
         
-        # Сравниваем с допуском 0.05 МБ
         tolerance = 0.05
         size_diff = abs(actual_size_mb - expected_size_mb)
         
@@ -105,17 +86,8 @@ def test_third_scenario():
         )
         
         logger.info(f"Размер файла совпадает с ожидаемым ({expected_size_mb:.2f} МБ)")
-
         logger.info("ТРЕТИЙ СЦЕНАРИЙ УСПЕШНО ВЫПОЛНЕН!")
-
-    except Exception as e:
-        logger.error(f"Ошибка в третьем сценарии: {e}", exc_info=True)
-        driver.save_screenshot("error_download_scenario.png")
-        logger.info("Скриншот ошибки сохранен: error_download_scenario.png")
-        raise
-    
+        
     finally:
+        # Teardown: Закрываем драйвер
         driver.quit()
-
-if __name__ == "__main__":
-    test_third_scenario()
