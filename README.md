@@ -45,7 +45,7 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:trueotmor/tensor.git
 cd TENZOR
 ```
 
