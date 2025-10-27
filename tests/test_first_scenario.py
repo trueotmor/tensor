@@ -1,13 +1,7 @@
-import sys
-import os
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-
-# Add project root to Python path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from pages.saby_contacts_page import SabyContactsPage
 from pages.tensor_main_page import TensorMainPage
 from pages.tensor_about_page import TensorAboutPage

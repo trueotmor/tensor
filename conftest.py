@@ -15,8 +15,6 @@ logging.basicConfig(
 @pytest.fixture
 def driver():
     chrome_options = Options()
-    chrome_options.add_argument("--window-size=1920,1080")
-    
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
         options=chrome_options
@@ -24,3 +22,9 @@ def driver():
     
     yield driver
     driver.quit()
+
+@pytest.fixture(autouse=True)
+def log_test_execution():
+    logging.info("=" * 50)
+    yield
+    logging.info("=" * 50)

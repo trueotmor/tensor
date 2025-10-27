@@ -1,13 +1,7 @@
 import logging
-import sys
-import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-
-# Add project root to Python path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from pages.saby_contacts_page import SabyContactsPage
 
 def test_second_scenario(driver=None):

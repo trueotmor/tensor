@@ -1,14 +1,9 @@
-import sys
-import os
 import logging
 import tempfile
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from pages.saby_download_page import SabyDownloadPage
 
 def setup_download_directory():
