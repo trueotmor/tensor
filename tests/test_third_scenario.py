@@ -11,12 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pages.saby_download_page import SabyDownloadPage
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s - %(levelname)s - %(asctime)s - %(name)s',
-    handlers=[logging.StreamHandler()]
-)
-
 def setup_download_directory():
     download_dir = tempfile.mkdtemp()
     logging.info(f"Директория для загрузок: {download_dir}")

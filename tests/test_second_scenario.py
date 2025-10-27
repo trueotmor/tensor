@@ -10,17 +10,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pages.saby_contacts_page import SabyContactsPage
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s - %(levelname)s - %(asctime)s - %(name)s',
-    handlers=[logging.StreamHandler()]
-)
-
-def test_second_scenario():
+def test_second_scenario(driver=None):
     logger = logging.getLogger(__name__)
     logger.info("🚀 Запуск второго сценария")
     
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    if driver is None:
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     
     try:
         saby_page = SabyContactsPage(driver)
@@ -123,11 +118,13 @@ def test_second_scenario():
         
     except Exception as e:
         logger.error(f"❌ Ошибка: {e}")
-        driver.save_screenshot("error_second_scenario.png")
-        logger.info("📸 Скриншот ошибки сохранен: error_second_scenario.png")
+        if driver:
+            driver.save_screenshot("error_second_scenario.png")
+            logger.info("📸 Скриншот ошибки сохранен: error_second_scenario.png")
         raise
     finally:
-        driver.quit()
+        if driver:
+            driver.quit()
 
 if __name__ == "__main__":
     test_second_scenario()

@@ -12,17 +12,12 @@ from pages.saby_contacts_page import SabyContactsPage
 from pages.tensor_main_page import TensorMainPage
 from pages.tensor_about_page import TensorAboutPage
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s - %(levelname)s - %(asctime)s - %(name)s',
-    handlers=[logging.StreamHandler()]
-)
-
-def test_first_scenario():
+def test_first_scenario(driver=None):
     logger = logging.getLogger(__name__)
     logging.info("🚀 Запуск первого сценария")
     
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    if driver is None:
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
     try:
         saby_page = SabyContactsPage(driver)
