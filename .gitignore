@@ -29,3 +29,18 @@ test-results/
 chromedriver*
 geckodriver*
 msedgedriver*
+
+# Screenshots
+*.png
+error_*.png
+!screenshots/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
