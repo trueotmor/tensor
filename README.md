@@ -73,7 +73,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Если файла requirements.txt нет, установите зависимости вручную:
+Или установите зависимости вручную:
 
 ```bash
 pip install selenium webdriver-manager pytest
@@ -93,14 +93,6 @@ pytest
 pytest tests/test_first_scenario.py
 pytest tests/test_second_scenario.py
 pytest tests/test_third_scenario.py
-```
-
-### Запуск тестов напрямую через Python
-
-```bash
-python tests/test_first_scenario.py
-python tests/test_second_scenario.py
-python tests/test_third_scenario.py
 ```
 
 ### Запуск с подробным выводом и логированием
