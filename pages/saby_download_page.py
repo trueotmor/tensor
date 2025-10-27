@@ -7,17 +7,19 @@ import glob
 import time
 
 class SabyDownloadPage(BasePage):
+    """Page Object для страницы загрузок Saby.ru"""
+    
     # Константы
-    FILE_PATTERNS = ["*.exe", "*.msi", "*.zip", "saby-setup*"]
+    FILE_PATTERNS = ["*.exe", "*.msi", "*.zip", "saby-setup*"]  # Паттерны файлов для поиска
     
     # Селекторы
-    DOWNLOAD_LINK = (By.CSS_SELECTOR, "a[href='/download']")
-    SABY_DESKTOP_TAB = (By.CSS_SELECTOR, ".controls-TabButton[data-id='plugin']")
-    SABY_DESKTOP_SELECTED = (By.CSS_SELECTOR, ".controls-TabButton[data-id='plugin'].controls-Checked__checked")
-    WINDOWS_TAB = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew-innerTabs .controls-TabButton[data-id='default']")
-    WINDOWS_SELECTED = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew-innerTabs .controls-TabButton[data-id='default'].controls-Checked__checked")
-    DOWNLOAD_BUTTON = (By.CSS_SELECTOR, "a[href*='saby-setup.exe']")
-    FILE_VERSION_INFO = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew__version")
+    DOWNLOAD_LINK = (By.CSS_SELECTOR, "a[href='/download']")  # Ссылка на страницу загрузок
+    SABY_DESKTOP_TAB = (By.CSS_SELECTOR, ".controls-TabButton[data-id='plugin']")  # Таб "Saby для десктопа"
+    SABY_DESKTOP_SELECTED = (By.CSS_SELECTOR, ".controls-TabButton[data-id='plugin'].controls-Checked__checked")  # Выбранный таб Saby Desktop
+    WINDOWS_TAB = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew-innerTabs .controls-TabButton[data-id='default']")  # Таб "Windows"
+    WINDOWS_SELECTED = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew-innerTabs .controls-TabButton[data-id='default'].controls-Checked__checked")  # Выбранный таб Windows
+    DOWNLOAD_BUTTON = (By.CSS_SELECTOR, "a[href*='saby-setup.exe']")  # Кнопка скачивания
+    FILE_VERSION_INFO = (By.CSS_SELECTOR, ".sbis_ru-DownloadNew__version")  # Информация о версии файла
 
     def __init__(self, driver, download_dir):
         super().__init__(driver)
@@ -25,10 +27,12 @@ class SabyDownloadPage(BasePage):
         self.download_dir = download_dir
 
     def open_page(self):
+        """Открывает главную страницу Saby.ru"""
         self.driver.get(self.url)
         self.wait_for_page_loaded()
 
     def navigate_to_downloads(self):
+        """Переход на страницу загрузок"""
         try:
             self._click_download_link()
             self.wait_for_url_contains("/download", timeout=10)
@@ -38,9 +42,11 @@ class SabyDownloadPage(BasePage):
             self.wait_for_page_loaded()
 
     def _click_download_link(self):
+        """Клик по ссылке на страницу загрузок"""
         self.click_element(self.DOWNLOAD_LINK, timeout=10)
 
     def ensure_saby_desktop_selected(self):
+        """Проверка и выбор таба 'Saby для десктопа'"""
         return self._ensure_tab_selected(
             self.SABY_DESKTOP_SELECTED, 
             self.SABY_DESKTOP_TAB,
@@ -48,6 +54,7 @@ class SabyDownloadPage(BasePage):
         )
 
     def ensure_windows_selected(self):
+        """Проверка и выбор таба 'Windows'"""
         return self._ensure_tab_selected(
             self.WINDOWS_SELECTED, 
             self.WINDOWS_TAB,
@@ -65,6 +72,7 @@ class SabyDownloadPage(BasePage):
             return True
 
     def get_download_info(self):
+        """Получение информации о файле для скачивания"""
         download_button = self.wait_visible(self.DOWNLOAD_BUTTON, timeout=10)
         file_url = download_button.get_attribute('href')
         version_info = self._get_version_info()
@@ -76,6 +84,7 @@ class SabyDownloadPage(BasePage):
         }
 
     def _get_version_info(self):
+        """Получение информации о версии файла"""
         try:
             version_element = self.find_element(self.FILE_VERSION_INFO, timeout=5)
             return version_element.text
@@ -84,6 +93,7 @@ class SabyDownloadPage(BasePage):
             return "Неизвестно"
 
     def download_web_installer(self):
+        """Скачивание веб-установщика"""
         self.ensure_saby_desktop_selected()
         self.ensure_windows_selected()
         download_info = self.get_download_info()
@@ -142,6 +152,7 @@ class SabyDownloadPage(BasePage):
         raise TimeoutError(f"Загрузка не завершилась за {timeout} секунд")
 
     def get_downloaded_file_size(self, file_path):
+        """Получение размера скачанного файла в МБ"""
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Файл не найден: {file_path}")
         

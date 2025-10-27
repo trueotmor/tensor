@@ -4,40 +4,46 @@ from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage
 
 class SabyContactsPage(BasePage):
+    """Page Object для страницы контактов Saby.ru"""
+    
     # Селекторы для навигации
-    CONTACTS_BUTTON = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__title span")
-    CONTACTS_LINK = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__items-visible a[href='/contacts']")
-    TENSOR_BANNER = (By.CSS_SELECTOR, "a.sbisru-Contacts__logo-tensor")
+    CONTACTS_BUTTON = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__title span")  # Кнопка "Контакты" в шапке
+    CONTACTS_LINK = (By.CSS_SELECTOR, ".sbisru-Header-ContactsMenu__items-visible a[href='/contacts']")  # Ссылка на контакты в меню
+    TENSOR_BANNER = (By.CSS_SELECTOR, "a.sbisru-Contacts__logo-tensor")  # Баннер Tensor на странице контактов
     
     # Селекторы для регионов
-    CURRENT_REGION = (By.CSS_SELECTOR, ".sbis_ru-Region-Chooser__text")
-    REGION_DIALOG = (By.CSS_SELECTOR, ".sbis_ru-Region-Panel")
-    REGION_ITEMS = (By.CSS_SELECTOR, ".sbis_ru-Region-Panel__item")
-    REGION_TITLE = (By.CSS_SELECTOR, "span[title]")
+    CURRENT_REGION = (By.CSS_SELECTOR, ".sbis_ru-Region-Chooser__text")  # Текущий выбранный регион
+    REGION_DIALOG = (By.CSS_SELECTOR, ".sbis_ru-Region-Panel")  # Диалог выбора региона
+    REGION_ITEMS = (By.CSS_SELECTOR, ".sbis_ru-Region-Panel__item")  # Элементы списка регионов
+    REGION_TITLE = (By.CSS_SELECTOR, "span[title]")  # Название региона в элементе
     
     # Селекторы для партнеров
-    PARTNERS_CONTAINER = (By.CSS_SELECTOR, "[data-qa='items-container']")
-    PARTNER_ITEMS = (By.CSS_SELECTOR, ".sbisru-Contacts-List__item")
-    PARTNER_NAME = (By.CSS_SELECTOR, ".sbisru-Contacts-List__name")
-    PARTNER_ADDRESS = (By.CSS_SELECTOR, ".sbisru-Contacts-List__address")
+    PARTNERS_CONTAINER = (By.CSS_SELECTOR, "[data-qa='items-container']")  # Контейнер со списком партнеров
+    PARTNER_ITEMS = (By.CSS_SELECTOR, ".sbisru-Contacts-List__item")  # Элементы партнеров
+    PARTNER_NAME = (By.CSS_SELECTOR, ".sbisru-Contacts-List__name")  # Название партнера
+    PARTNER_ADDRESS = (By.CSS_SELECTOR, ".sbisru-Contacts-List__address")  # Адрес партнера
 
     def __init__(self, driver):
         super().__init__(driver)
         self.url = "https://saby.ru"
 
     def open_page(self):
+        """Открывает главную страницу Saby.ru"""
         self.driver.get(self.url)
         self.wait_for_page_loaded()
 
     def click_contacts_button(self):
+        """Клик по кнопке 'Контакты' в шапке"""
         self.click_element(self.CONTACTS_BUTTON)
         self.wait_visible(self.CONTACTS_LINK, timeout=10)
 
     def click_contacts_link(self):
+        """Клик по ссылке на страницу контактов"""
         self.click_element(self.CONTACTS_LINK)
         self.wait_for_url_contains("/contacts", timeout=10)
 
     def click_tensor_banner(self):
+        """Клик по баннеру Tensor и переключение на новую вкладку"""
         self.click_element(self.TENSOR_BANNER)
         WebDriverWait(self.driver, 10).until(
             lambda driver: len(driver.window_handles) > 1
@@ -46,10 +52,12 @@ class SabyContactsPage(BasePage):
         self.wait_for_page_loaded()
 
     def get_current_region(self):
+        """Получение названия текущего региона"""
         region_element = self.find_element(self.CURRENT_REGION, timeout=10)
         return region_element.text.strip()
 
     def get_partners(self):
+        """Получение списка всех видимых партнеров"""
         try:
             self.find_element(self.PARTNERS_CONTAINER, timeout=10)
             partner_elements = self.driver.find_elements(*self.PARTNER_ITEMS)
@@ -59,6 +67,7 @@ class SabyContactsPage(BasePage):
             return []
 
     def get_partners_info(self):
+        """Получение информации обо всех партнерах (название и адрес)"""
         partners_info = []
         try:
             partner_elements = self.driver.find_elements(*self.PARTNER_ITEMS)
@@ -82,11 +91,13 @@ class SabyContactsPage(BasePage):
             return {'number': number, 'name': 'Не удалось получить данные', 'address': ''}
 
     def open_region_chooser(self):
+        """Открывает диалог выбора региона"""
         self.click_element(self.CURRENT_REGION)
         self.wait_visible(self.REGION_DIALOG, timeout=10)
         self.logger.info("Диалог выбора региона открыт")
 
     def select_region_by_name(self, region_name):
+        """Выбирает регион по названию"""
         self.logger.info(f"Ищем регион: {region_name}")
         
         region_elements = self.driver.find_elements(*self.REGION_ITEMS)
@@ -124,15 +135,19 @@ class SabyContactsPage(BasePage):
         self.wait_for_page_loaded()
 
     def select_kamchatka_region(self):
+        """Выбирает Камчатский край"""
         return self.select_region_by_name("Камчатский край")
 
     def get_page_title(self):
+        """Получение title страницы"""
         return self.driver.title
 
     def wait_for_region_changed(self, expected_region, timeout=10):
+        """Ожидание смены региона"""
         WebDriverWait(self.driver, timeout).until(
             lambda driver: expected_region.lower() in self.get_current_region().lower()
         )
 
     def wait_for_partners_updated(self, timeout=10):
+        """Ожидание обновления списка партнеров"""
         self.find_element(self.PARTNERS_CONTAINER, timeout=timeout)
